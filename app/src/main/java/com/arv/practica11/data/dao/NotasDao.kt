@@ -1,11 +1,13 @@
 package com.arv.practica11.data.dao
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.arv.practica11.data.entities.Nota
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface NotasDao {
     @Upsert
     suspend fun upsertNota(nota: Nota)
