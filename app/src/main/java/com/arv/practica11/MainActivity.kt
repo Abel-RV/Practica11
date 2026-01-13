@@ -9,39 +9,43 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.arv.practica11.data.NotasDatabase
+import com.arv.practica11.ui.screens.NotaViewModel
+import com.arv.practica11.ui.screens.NotasScreen
 import com.arv.practica11.ui.theme.Practica11Theme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var db: NotasDatabase
+    private lateinit var viewModel: NotaViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Practica11Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+        db= Room.databaseBuilder(
+            applicationContext,
+            NotasDatabase::class.java,
+            "notas.db"
+        ).build()
+
+        viewModel= ViewModelProvider(
+            this,
+            object : ViewModelProvider.Factory{
+                override fun <T: ViewModel> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return NotaViewModel(db.notasDao()) as T
                 }
             }
+        )[NotaViewModel::class.java]
+        setContent {
+            val state = viewModel.state.collectAsState()
+            NotasScreen(
+                state=state.value,
+                onEvent = viewModel::onEvent
+            )
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Practica11Theme {
-        Greeting("Android")
     }
 }
