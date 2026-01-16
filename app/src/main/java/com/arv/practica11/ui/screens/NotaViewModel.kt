@@ -2,6 +2,7 @@ package com.arv.practica11.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arv.practica11.data.UserPreferences
 import com.arv.practica11.data.dao.NotasDao
 import com.arv.practica11.data.entities.Nota
 import com.arv.practica11.data.enums.SortType
@@ -16,9 +17,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class NotaViewModel(private val dao: NotasDao): ViewModel() {
+class NotaViewModel(
+    private val dao: NotasDao,
+    private val userPreferences: UserPreferences
+    ): ViewModel() {
     private val _sortType= MutableStateFlow(SortType.TITULO_ASC)
-
     private val _contacts = _sortType.flatMapLatest { sortType->
         when(sortType){
             SortType.TITULO_ASC -> dao.getNotasAlf_ASC()
@@ -35,11 +38,22 @@ class NotaViewModel(private val dao: NotasDao): ViewModel() {
 
     private val _state = MutableStateFlow(NotaState())
 
+    init {
+        val ultimaCategoria = userPreferences.getLastCategory()
+        _state.update { it.copy(filtroActual = ultimaCategoria) }
+    }
+
     val state: StateFlow<NotaState> = combine(
         _state,
         _sortType,
         _contacts
     ) { state, sortType, notas ->
+
+        val notasFiltradas = if(state.filtroActual=="Todas"){
+            notas
+        }else{
+            notas.filter { it.categoria==state.filtroActual }
+        }
         state.copy(
             notas = notas,
             currentSortType = sortType
@@ -75,10 +89,20 @@ class NotaViewModel(private val dao: NotasDao): ViewModel() {
                     dao.deleteNota(event.nota)
                 }
             }
+            is NotasEvent.SetCategoria->{
+                _state.update { it.copy(categoriaSeleccionada = event.categoria) }
+            }
+
+            is NotasEvent.SetFiltro->{
+                userPreferences.saveLastCategory(event.categoria)
+                _state.update { it.copy(filtroActual = event.categoria) }
+            }
+
             is NotasEvent.SaveNota->{
                 var titulo = _state.value.titulo
                 var contenido = _state.value.contenido
                 val fecha = _state.value.fechaCreacion
+                val categoria = _state.value.categoriaSeleccionada
                 if(titulo.isBlank()){
                     return
                 }
@@ -94,14 +118,13 @@ class NotaViewModel(private val dao: NotasDao): ViewModel() {
                         it.copy(
                             isAddingNota = false,
                             titulo = "",
-                            contenido = ""
+                            contenido = "",
+                            categoriaSeleccionada = "Personal"
                         )
                     }
                 }
             }
-
-            is NotasEvent.SetCategoria -> TODO()
-            is NotasEvent.SetFiltro -> TODO()
+            else -> {}
         }
     }
 }

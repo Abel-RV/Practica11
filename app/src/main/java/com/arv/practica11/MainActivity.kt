@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.arv.practica11.data.NotasDatabase
+import com.arv.practica11.data.UserPreferences
 import com.arv.practica11.ui.screens.NotaViewModel
 import com.arv.practica11.ui.screens.NotasScreen
 import com.arv.practica11.ui.theme.Practica11Theme
@@ -23,20 +24,28 @@ import com.arv.practica11.ui.theme.Practica11Theme
 class MainActivity : ComponentActivity() {
     private lateinit var db: NotasDatabase
     private lateinit var viewModel: NotaViewModel
+
+    private lateinit var userPreferences: UserPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db= Room.databaseBuilder(
             applicationContext,
             NotasDatabase::class.java,
             "notas.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
+
+        userPreferences = UserPreferences(applicationContext)
 
         viewModel= ViewModelProvider(
             this,
             object : ViewModelProvider.Factory{
                 override fun <T: ViewModel> create(modelClass: Class<T>): T {
                     @Suppress("UNCHECKED_CAST")
-                    return NotaViewModel(db.notasDao()) as T
+                    return NotaViewModel(
+                        db.notasDao(),
+                        userPreferences
+                    ) as T
                 }
             }
         )[NotaViewModel::class.java]

@@ -12,15 +12,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arv.practica11.data.AddNotaDialog
@@ -34,6 +37,8 @@ fun NotasScreen(
     onEvent:(NotasEvent)-> Unit,
     modifier: Modifier= Modifier
 ){
+    val context = LocalContext.current
+    val categoriasFiltro = listOf("Todas","Trabajo","Estudios")
     Scaffold(
         floatingActionButton={
             FloatingActionButton(
@@ -44,6 +49,22 @@ fun NotasScreen(
         },
         modifier=modifier
     ) { padding->
+        Column( modifier= Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .padding(16.dp)
+        ) {
+            Text("Filtrar por categoria")
+            Row {
+                categoriasFiltro.forEach { categoria->
+                    FilterChip(
+                        selected=state.filtroActual==categoria,
+                        onClick = {onEvent(NotasEvent.SetFiltro(categoria))},
+                        label = {Text(categoria)}
+                    )
+                }
+            }
+        }
        LazyColumn(
            modifier= Modifier
                .fillMaxSize()
@@ -51,6 +72,7 @@ fun NotasScreen(
                .padding(16.dp)
        ) {
            item {
+               Text("Filtrar por categoría:", style = MaterialTheme.typography.labelLarge)
                Row(
                    modifier=Modifier.fillMaxWidth(),
                    horizontalArrangement = Arrangement.SpaceEvenly,
