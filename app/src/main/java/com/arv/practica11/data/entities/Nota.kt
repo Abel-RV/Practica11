@@ -6,8 +6,10 @@ import java.time.LocalDate
 
 @Entity
 data class Nota(
-    @PrimaryKey(autoGenerate = true) val id: Int=0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int=0,
     var titulo: String,
     var contenido:String?,
-    val fecha: String
+    val fecha: String,
+    val categoria:String
 )

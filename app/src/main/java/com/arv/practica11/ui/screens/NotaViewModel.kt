@@ -85,7 +85,8 @@ class NotaViewModel(private val dao: NotasDao): ViewModel() {
                 val nota = Nota(
                     titulo = titulo,
                     contenido = contenido,
-                    fecha = fecha.toString()
+                    fecha = fecha.toString(),
+                    categoria = categoria
                 )
                 viewModelScope.launch {
                     dao.upsertNota(nota)
@@ -98,6 +99,9 @@ class NotaViewModel(private val dao: NotasDao): ViewModel() {
                     }
                 }
             }
+
+            is NotasEvent.SetCategoria -> TODO()
+            is NotasEvent.SetFiltro -> TODO()
         }
     }
 }

@@ -13,5 +13,7 @@ data class NotaState(
     val fechaCreacion: LocalDate = LocalDate.now(),
 
     val isAddingNota: Boolean=false,
+    val categoriaSeleccionada:String="Personal",
+    val filtroActual:String = "Todas",
     val currentSortType: SortType= SortType.TITULO_ASC
 )

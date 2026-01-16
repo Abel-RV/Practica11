@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.arv.practica11.data.dao.NotasDao
 import com.arv.practica11.data.entities.Nota
 
-@Database(entities = [Nota::class], version = 1)
+@Database(entities = [Nota::class], version = 2)
 abstract class NotasDatabase: RoomDatabase() {
     abstract fun notasDao(): NotasDao
     companion object{
