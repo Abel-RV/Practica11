@@ -64,56 +64,58 @@ fun NotasScreen(
                     )
                 }
             }
-        }
-       LazyColumn(
-           modifier= Modifier
-               .fillMaxSize()
-               .padding(padding)
-               .padding(16.dp)
-       ) {
-           item {
-               Text("Filtrar por categoría:", style = MaterialTheme.typography.labelLarge)
-               Row(
-                   modifier=Modifier.fillMaxWidth(),
-                   horizontalArrangement = Arrangement.SpaceEvenly,
-                   verticalAlignment = Alignment.CenterVertically
-               ) {
-                   SortType.entries.forEach { sortType->
-                       Row(
-                           verticalAlignment = Alignment.CenterVertically,
-                           modifier = Modifier.clickable{
-                               onEvent(NotasEvent.SortNotas(sortType))
-                           }
-                       ) {
-                           RadioButton(
-                               selected = state.currentSortType==sortType,
-                               onClick = {onEvent(NotasEvent.SortNotas(sortType))}
-                           )
-                           Text(sortType.name.replace("_"," "))
-                       }
-                   }
-               }
-           }
+            LazyColumn(
+                modifier= Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp)
+            ) {
+                item {
+                    Text("Filtrar por categoría:", style = MaterialTheme.typography.labelLarge)
+                    Row(
+                        modifier=Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SortType.entries.forEach { sortType->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable{
+                                    onEvent(NotasEvent.SortNotas(sortType))
+                                }
+                            ) {
+                                RadioButton(
+                                    selected = state.currentSortType==sortType,
+                                    onClick = {onEvent(NotasEvent.SortNotas(sortType))}
+                                )
+                                Text(sortType.name.replace("_"," "))
+                            }
+                        }
+                    }
+                }
 
-           items(state.notas) { nota->
-               Row (
-                   modifier = Modifier.fillMaxWidth(),
-                   verticalAlignment = Alignment.CenterVertically
-               ){
-                   Column(
-                       modifier = Modifier.weight(1f)
-                   ){
-                       Text("${nota.titulo} ${nota.contenido}", fontSize = 20.sp)
-                       Text(nota.fecha, fontSize = 12.sp)
-                   }
-                   IconButton(
-                       onClick = {onEvent(NotasEvent.DeleteNota(nota))}
-                   ) {
-                       Icon(Icons.Default.Delete, contentDescription = "Delete")
-                   }
-               }
-           }
-       }
+                items(state.notas) { nota->
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ){
+                            Text("${nota.titulo} ${nota.contenido}", fontSize = 20.sp)
+                            Text(nota.fecha, fontSize = 12.sp)
+                        }
+                        IconButton(
+                            onClick = {onEvent(NotasEvent.DeleteNota(nota))}
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete")
+                        }
+                    }
+                }
+            }
+
+        }
+
         if(state.isAddingNota){
             AddNotaDialog(
                 state=state,

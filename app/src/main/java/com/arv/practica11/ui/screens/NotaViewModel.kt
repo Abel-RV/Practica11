@@ -55,7 +55,7 @@ class NotaViewModel(
             notas.filter { it.categoria==state.filtroActual }
         }
         state.copy(
-            notas = notas,
+            notas = notasFiltradas,
             currentSortType = sortType
         )
     }.stateIn(
