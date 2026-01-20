@@ -38,7 +38,8 @@ fun NotasScreen(
     modifier: Modifier= Modifier
 ){
     val context = LocalContext.current
-    val categoriasFiltro = listOf("Todas","Trabajo","Estudios")
+    val categoriasFiltro = listOf("Todas","Personal","Trabajo","Estudios")
+    val filtros = listOf("TITULO ASC","TITULO DESC","FECHA ASC","FECHA DESC")
     Scaffold(
         floatingActionButton={
             FloatingActionButton(
@@ -65,50 +66,48 @@ fun NotasScreen(
                 }
             }
             LazyColumn(
-                modifier= Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp)
             ) {
                 item {
-                    Text("Filtrar por categoría:", style = MaterialTheme.typography.labelLarge)
+                    Text("Ordenar por:", style = MaterialTheme.typography.labelLarge)
                     Row(
                         modifier=Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         SortType.entries.forEach { sortType->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
+                            Column(
                                 modifier = Modifier.clickable{
                                     onEvent(NotasEvent.SortNotas(sortType))
                                 }
                             ) {
-                                RadioButton(
+                                FilterChip(
                                     selected = state.currentSortType==sortType,
-                                    onClick = {onEvent(NotasEvent.SortNotas(sortType))}
+                                    onClick = {onEvent(NotasEvent.SortNotas(sortType))},
+                                    label = {filtros}
                                 )
-                                Text(sortType.name.replace("_"," "))
+                                Text(sortType.name.replace("_"," "), fontSize = 12.sp)
                             }
                         }
                     }
                 }
 
-                items(state.notas) { nota->
-                    Row (
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        Column(
-                            modifier = Modifier.weight(1f)
-                        ){
-                            Text("${nota.titulo} ${nota.contenido}", fontSize = 20.sp)
-                            Text(nota.fecha, fontSize = 12.sp)
-                        }
-                        IconButton(
-                            onClick = {onEvent(NotasEvent.DeleteNota(nota))}
+                items(state.notas) { nota ->
+                    androidx.compose.material3.Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(8.dp)
                         ) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(nota.titulo, style = MaterialTheme.typography.titleMedium)
+                                Text(nota.contenido ?: "", style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    "${nota.fecha} - ${nota.categoria}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                            IconButton(onClick = { onEvent(NotasEvent.DeleteNota(nota)) }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            }
                         }
                     }
                 }
