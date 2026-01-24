@@ -16,4 +16,7 @@ sealed interface NotasEvent {
     data class SetCategoria(val categoria: String) : NotasEvent
     data class SetFiltro(val categoria: String) : NotasEvent
     object SaveNota: NotasEvent
+
+    data class editarNota(val nota: Nota): NotasEvent
+    data class compartirNota(val nota: Nota): NotasEvent
 }

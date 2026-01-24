@@ -1,5 +1,6 @@
 package com.arv.practica11.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -27,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arv.practica11.data.AddNotaDialog
+import com.arv.practica11.data.entities.Nota
 import com.arv.practica11.data.enums.SortType
 import com.arv.practica11.data.events.NotasEvent
 import com.arv.practica11.data.state.NotaState
@@ -38,6 +42,15 @@ fun NotasScreen(
     modifier: Modifier= Modifier
 ){
     val context = LocalContext.current
+
+    fun compartirNota(nota: Nota){
+        val enviarIndent: Intent= Intent().apply {
+            action= Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT,"${nota.titulo}\n\n ${nota.contenido}")
+            type="text/plain"
+        }
+    }
+
     val categoriasFiltro = listOf("Todas","Personal","Trabajo","Estudios")
     val filtros = listOf("TITULO ASC","TITULO DESC","FECHA ASC","FECHA DESC")
     Scaffold(
@@ -107,6 +120,12 @@ fun NotasScreen(
                             }
                             IconButton(onClick = { onEvent(NotasEvent.DeleteNota(nota)) }) {
                                 Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            }
+                            IconButton(onClick = {onEvent(NotasEvent.editarNota(nota))}) {
+                                Icon(Icons.Default.Edit, contentDescription = "Editar")
+                            }
+                            IconButton(onClick = {compartirNota(nota)}) {
+                                Icon(Icons.Default.Share, contentDescription = "Compartir")
                             }
                         }
                     }

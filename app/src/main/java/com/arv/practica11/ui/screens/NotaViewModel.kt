@@ -74,10 +74,31 @@ class NotaViewModel(
             }
 
             is NotasEvent.ShowDialog->{
-                _state.update { it.copy(isAddingNota = true) }
+                _state.update { it.copy(
+                    isAddingNota = true,
+                    titulo = "",
+                    contenido = "",
+                    idNota = null
+                    ) }
             }
             is NotasEvent.HiddenDialog->{
-                _state.update { it.copy(isAddingNota = false) }
+                _state.update { it.copy(
+                    isAddingNota = false,
+                    titulo = "",
+                    contenido = "",
+                    idNota = null
+                ) }
+            }
+            is NotasEvent.editarNota->{
+                _state.update {
+                    it.copy(
+                        titulo = event.nota.titulo,
+                        contenido = event.nota.contenido,
+                        categoriaSeleccionada = event.nota.categoria,
+                        idNota = event.nota.id,
+                        isAddingNota = true
+                    )
+                }
             }
 
             is NotasEvent.SortNotas->{
@@ -103,10 +124,12 @@ class NotaViewModel(
                 var contenido = _state.value.contenido
                 val fecha = _state.value.fechaCreacion
                 val categoria = _state.value.categoriaSeleccionada
+                val id = _state.value.idNota?:0
                 if(titulo.isBlank()){
                     return
                 }
                 val nota = Nota(
+                    id=id,
                     titulo = titulo,
                     contenido = contenido,
                     fecha = fecha.toString(),
@@ -119,7 +142,8 @@ class NotaViewModel(
                             isAddingNota = false,
                             titulo = "",
                             contenido = "",
-                            categoriaSeleccionada = "Personal"
+                            categoriaSeleccionada = "Personal",
+                            idNota = null
                         )
                     }
                 }

@@ -15,5 +15,6 @@ data class NotaState(
     val isAddingNota: Boolean=false,
     val categoriaSeleccionada:String="Personal",
     val filtroActual:String = "Todas",
-    val currentSortType: SortType= SortType.TITULO_ASC
+    val currentSortType: SortType= SortType.TITULO_ASC,
+    val idNota:Int? =null
 )
