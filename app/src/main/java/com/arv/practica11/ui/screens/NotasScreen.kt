@@ -49,6 +49,9 @@ fun NotasScreen(
             putExtra(Intent.EXTRA_TEXT,"${nota.titulo}\n\n ${nota.contenido}")
             type="text/plain"
         }
+
+        val compartirIntent = Intent.createChooser(enviarIndent,null);
+        context.startActivity(compartirIntent)
     }
 
     val categoriasFiltro = listOf("Todas","Personal","Trabajo","Estudios")
